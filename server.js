@@ -9,7 +9,7 @@ const { Server } = require("socket.io");
 const cron = require("node-cron");
 const Booking = require("./models/Booking");
 const jwt = require("jsonwebtoken");
-const User = require("./models/user");
+const User = require("./models/User");
 const errormiddleware = require("./middleware/errorMiddleware");
 const pricingRoutes = require("./routes/pricingroutes");
 const {
