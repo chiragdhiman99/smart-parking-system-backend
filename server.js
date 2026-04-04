@@ -19,7 +19,6 @@ const {
 const Parking = require("./models/Parking");
 const dns = require("dns");
 
-
 dns.setServers(["8.8.8.8", "8.8.4.4"]);
 
 connectDB();
@@ -47,7 +46,9 @@ app.use(async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findById(decoded.userId);
     if (user?.status === "banned") {
-      return res.status(403).json({ message: "Your account has been suspended." });
+      return res
+        .status(403)
+        .json({ message: "Your account has been suspended." });
     }
     next();
   } catch (err) {
@@ -79,11 +80,8 @@ app.post("/confirm-booking", async (req, res) => {
 
 app.use(errormiddleware);
 io.on("connection", (socket) => {
-  
-
   socket.on("joinRoom", (userid) => {
     socket.join(userid);
-    
   });
 });
 
@@ -119,15 +117,9 @@ cron.schedule("* * * * *", async () => {
           toTime: booking.toTime,
         });
       }
-
-      
     }
   } catch (error) {
     console.error(error);
   }
 });
-server.listen(port, () => {
-  
-});
-
-
+server.listen(port, () => {});

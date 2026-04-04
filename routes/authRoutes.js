@@ -1,6 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
+const loginLimiter = require("../middleware/ratelimiter");
+const {
+  loginValidator,
+  signupValidator,
+  validate,
+} = require("../middleware/validator");
+
 const {
   signup,
   login,
@@ -11,8 +18,8 @@ const {
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
 
-router.post("/signup", signup);
-router.post("/login", login);
+router.post("/signup", signupValidator, signup);
+router.post("/login", loginLimiter, loginValidator, login);
 router.get("/user/:userId", getuser);
 router.put("/user/:userId", putuser);
 
@@ -60,7 +67,7 @@ router.put("/user/:userId/status", async (req, res) => {
     const updated = await User.findByIdAndUpdate(
       req.params.userId,
       { status: req.body.status },
-      { new: true }
+      { new: true },
     );
     res.json(updated);
   } catch (err) {
