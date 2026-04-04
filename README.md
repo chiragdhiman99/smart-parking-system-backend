@@ -25,9 +25,9 @@ JWT Auth | Google OAuth 2.0 | Razorpay Payments | Nodemailer | Rate Limiting | M
 
 ---
 
-## 🧠 Core Problem Solved
+## 🧠 Core Problems Solved
 
-### ⚡ Time-Based Slot Conflict Resolution
+### ⏱️ Time-Based Slot Conflict Resolution
 
 Most parking backends block a slot for the **entire day** once booked. SlotHub's booking logic validates against **time ranges** — so multiple users can book the same slot on the same day as long as their windows don't overlap.
 
@@ -39,6 +39,24 @@ Slot C1 — April 4, 2026
 ```
 
 This maximizes slot utilization — one slot serves multiple users per day.
+
+### 💰 Dynamic Pricing Engine
+
+Prices are not fixed — the backend calculates a final price dynamically based on real-world demand signals before every booking:
+
+| Condition | Adjustment |
+|---|---|
+| Occupancy below 30% | −20% Low Demand Discount |
+| Occupancy 60–80% | +20% High Demand Surge |
+| Occupancy above 80% | +50% Peak Demand Surge |
+| Peak hours (9–11 AM, 5–8 PM) | +30% Peak Hours Surge |
+| Weekends (Sat & Sun) | +20% Weekend Surge |
+
+All multipliers stack — the final price is computed server-side and passed to Razorpay for order creation.
+
+### 📅 Date Blocking
+
+Owners can mark specific dates as unavailable via the API. Blocked dates are stored on the parking document and excluded from the booking calendar — the frontend prevents drivers from selecting them entirely.
 
 ---
 
@@ -56,14 +74,14 @@ smart-parking-system-backend/
 │
 ├── models/                ← Mongoose schemas
 │   ├── User.js            ← Driver / Owner / Admin
-│   ├── Parking.js         ← Parking locations & slots
+│   ├── Parking.js         ← Parking locations, slots & blocked dates
 │   ├── Booking.js         ← Bookings with time-based conflict logic
 │   └── Review.js          ← User reviews
 │
 ├── controllers/           ← Business logic
 │   ├── authController.js  ← Signup, login, user CRUD
-│   ├── parkingController.js ← Parking CRUD, slot management
-│   ├── bookingController.js ← Booking creation, conflict detection
+│   ├── parkingController.js ← Parking CRUD, slot management, date blocking
+│   ├── bookingController.js ← Booking creation, conflict detection, dynamic pricing
 │   ├── adminController.js ← Admin operations
 │   └── paymentController.js ← Razorpay order & verification
 │
@@ -106,19 +124,21 @@ smart-parking-system-backend/
 | GET | `/:id` | Get parking detail |
 | PUT | `/:id` | Update parking |
 | DELETE | `/:id` | Delete parking |
+| PUT | `/:id/blocked-dates` | Update blocked dates (owner) |
 
 ### Bookings `/api/bookings`
 | Method | Endpoint | Description |
 |---|---|---|
-| POST | `/` | Create booking (with conflict check) |
+| POST | `/` | Create booking (with time conflict check) |
 | GET | `/user/:userId` | Get bookings by user |
 | GET | `/parking/:parkingId` | Get bookings by parking |
 | PUT | `/:id/status` | Update booking status |
+| GET | `/check/auth` | Verify user auth before booking |
 
 ### Payments `/api/payment`
 | Method | Endpoint | Description |
 |---|---|---|
-| POST | `/create-order` | Create Razorpay order |
+| POST | `/create-order` | Create Razorpay order with dynamic price |
 | POST | `/verify` | Verify payment signature |
 
 ### Admin `/api/admin`
@@ -154,7 +174,7 @@ GET /api/auth/google/callback
 
 ### Role-Based Access
 - `driver` — search, book, view own bookings
-- `owner` — manage listings, view bookings for their parkings
+- `owner` — manage listings, block dates, view bookings for their parkings
 - `admin` — full platform access, protected route + rate limiting
 
 ---
@@ -163,6 +183,7 @@ GET /api/auth/google/callback
 
 ```
 POST /api/payment/create-order
+     → Apply dynamic pricing multipliers
      → razorpay.orders.create({ amount, currency })
      → Return order_id to frontend
 
@@ -173,7 +194,7 @@ POST /api/payment/verify
      → crypto.createHmac('sha256', secret)
      → Verify razorpay_signature
      → If valid → confirm booking
-     → Send confirmation email
+     → Send confirmation email via Nodemailer
 ```
 
 ---
@@ -269,11 +290,3 @@ node server.js
 **Chirag Dhiman**  
 📧 dhimanchirag99@gmail.com  
 🔗 [GitHub](https://github.com/chiragdhiman99)
-
----
-
-<div align="center">
-
-
-
-</div>
