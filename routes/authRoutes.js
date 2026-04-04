@@ -57,7 +57,7 @@ router.get(
     );
 
     res.redirect(
-      `http://localhost:5173/${finalRole}/dashboard?token=${token}&role=${finalRole}`,
+      `https://smart-parking-system-frontend-kappa.vercel.app/${finalRole}/dashboard?token=${token}&role=${finalRole}`,
     );
   },
 );
