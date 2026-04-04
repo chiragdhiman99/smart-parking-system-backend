@@ -274,8 +274,6 @@ node server.js
 
 <div align="center">
 
-**Built with ❤️ from Dharamsala, Himachal Pradesh 🏔️**
 
-⭐ Star this repo if you found it helpful!
 
 </div>
