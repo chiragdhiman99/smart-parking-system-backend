@@ -1,16 +1,28 @@
 const booking = require("../models/Booking");
 const Parking = require("../models/Parking");
-const { sendCancellationEmail } = require("../utils/sendemail");
+const {
+  sendCancellationEmail,
+  sendBookingConfirmation,
+} = require("../utils/sendemail");
 const createbooking = async (req, res) => {
   try {
     const newbooking = new booking(req.body);
     const savedbooking = await newbooking.save();
     res.status(200).json(savedbooking);
+
+    try {
+      await sendBookingConfirmation(
+        savedbooking.userEmail,
+        savedbooking.userName,
+        savedbooking,
+      );
+    } catch (emailError) {
+      console.log("❌ Booking email error:", emailError.message);
+    }
   } catch (err) {
     res.status(500).json(err);
   }
 };
-
 const getbookings = async (req, res) => {
   try {
     const email = req.query.userEmail;
