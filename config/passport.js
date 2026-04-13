@@ -22,7 +22,6 @@ passport.use(
             fullName: profile.displayName,
             email: profile.emails[0].value,
             password: "google_auth",
-            role: role,
             photo: profile.photos[0].value,
           });
         }

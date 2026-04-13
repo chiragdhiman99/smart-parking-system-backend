@@ -7,12 +7,17 @@ const transporter = nodemailer.createTransport({
     pass: process.env.GMAIL_PASS,
   },
 });
+
+console.log("GMAIL_USER:", process.env.GMAIL_USER);
+console.log("GMAIL_PASS:", process.env.GMAIL_PASS ? "✅ Loaded" : "❌ MISSING");
+
 const sendBookingConfirmation = async (userEmail, userName, bookingDetails) => {
-  await transporter.sendMail({
-    from: `"Smart Parking System" <${process.env.GMAIL_USER}>`,
-    to: userEmail,
-    subject: "Booking Confirmation - Smart Parking System",
-    html: `
+  try {
+    await transporter.sendMail({
+      from: `"Smart Parking System" <${process.env.GMAIL_USER}>`,
+      to: userEmail,
+      subject: "Booking Confirmation - Smart Parking System",
+      html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f9f9f9; padding: 20px;">
         
         <!-- Header -->
@@ -45,7 +50,7 @@ const sendBookingConfirmation = async (userEmail, userName, bookingDetails) => {
                 <td style="padding: 10px 5px; color: #888;">Time</td>
                 <td style="padding: 10px 5px; color: #333; font-weight: bold;">${bookingDetails.fromTime}</td>
               </tr>
-                <tr style="border-bottom: 1px solid #e0e0e0;">
+              <tr style="border-bottom: 1px solid #e0e0e0;">
                 <td style="padding: 10px 5px; color: #888;">Vehicle Number</td>
                 <td style="padding: 10px 5px; color: #333; font-weight: bold;">${bookingDetails.vehicleNumber}</td>
               </tr>
@@ -79,15 +84,20 @@ const sendBookingConfirmation = async (userEmail, userName, bookingDetails) => {
 
       </div>
     `,
-  });
+    });
+    console.log("✅ Booking email sent to:", userEmail);
+  } catch (error) {
+    console.log("❌ Booking email error:", error.message);
+  }
 };
 
 const sendThankYouEmail = async (userEmail, userName, bookingDetails) => {
-  await transporter.sendMail({
-    from: `"Smart Parking System" <${process.env.GMAIL_USER}>`,
-    to: userEmail,
-    subject: "Thank You for Visiting - Smart Parking System",
-    html: `
+  try {
+    await transporter.sendMail({
+      from: `"Smart Parking System" <${process.env.GMAIL_USER}>`,
+      to: userEmail,
+      subject: "Thank You for Visiting - Smart Parking System",
+      html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f9f9f9; padding: 20px;">
         
         <div style="background-color: #1a1a2e; padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
@@ -139,15 +149,20 @@ const sendThankYouEmail = async (userEmail, userName, bookingDetails) => {
 
       </div>
     `,
-  });
+    });
+    console.log("✅ ThankYou email sent to:", userEmail);
+  } catch (error) {
+    console.log("❌ ThankYou email error:", error.message);
+  }
 };
 
 const sendCancellationEmail = async (userEmail, userName, bookingDetails) => {
-  await transporter.sendMail({
-    from: `"Smart Parking System" <${process.env.GMAIL_USER}>`,
-    to: userEmail,
-    subject: "Booking Cancelled - Smart Parking System",
-    html: `
+  try {
+    await transporter.sendMail({
+      from: `"Smart Parking System" <${process.env.GMAIL_USER}>`,
+      to: userEmail,
+      subject: "Booking Cancelled - Smart Parking System",
+      html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f9f9f9; padding: 20px;">
         
         <div style="background-color: #1a1a2e; padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
@@ -187,12 +202,12 @@ const sendCancellationEmail = async (userEmail, userName, bookingDetails) => {
             </table>
           </div>
 
-       <div style="background-color: #fefce8; border-left: 4px solid #eab308; padding: 15px; margin: 15px 0; border-radius: 4px;">
-  <p style="color: #854d0e; font-size: 13px; margin: 0;">
-    ⚠️ <b>Refund Notice:</b> This is a demo platform. No actual payment will be refunded. 
-    In a live system, ${bookingDetails.amount} would be refunded to your original payment method within 5-7 business days.
-  </p>
-</div>
+          <div style="background-color: #fefce8; border-left: 4px solid #eab308; padding: 15px; margin: 15px 0; border-radius: 4px;">
+            <p style="color: #854d0e; font-size: 13px; margin: 0;">
+              ⚠️ <b>Refund Notice:</b> This is a demo platform. No actual payment will be refunded. 
+              In a live system, ${bookingDetails.amount} would be refunded to your original payment method within 5-7 business days.
+            </p>
+          </div>
 
           <p style="color: #333; font-size: 14px; margin-top: 25px;">
             Warm regards,<br/>
@@ -211,7 +226,11 @@ const sendCancellationEmail = async (userEmail, userName, bookingDetails) => {
 
       </div>
     `,
-  });
+    });
+    console.log("✅ Cancellation email sent to:", userEmail);
+  } catch (error) {
+    console.log("❌ Cancellation email error:", error.message);
+  }
 };
 
 module.exports = {
