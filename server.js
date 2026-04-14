@@ -78,6 +78,10 @@ app.post("/confirm-booking", async (req, res) => {
   res.json({ success: true, message: "Email sent!" });
 });
 
+app.get('/', (req, res) => {
+  res.status(200).json({ status: 'ok', message: 'Backend is running!' })
+});
+
 app.use(errormiddleware);
 io.on("connection", (socket) => {
   socket.on("joinRoom", (userid) => {
