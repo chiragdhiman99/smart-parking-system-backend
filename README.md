@@ -18,7 +18,7 @@ JWT Auth | Google OAuth 2.0 | Razorpay Payments | Nodemailer | Rate Limiting | M
 
 <br/>
 
-[![Live API](https://img.shields.io/badge/⚡_Live_API-Render-46e3b7?style=for-the-badge)](https://smart-parking-system-backend-oco6.onrender.com)
+[![Live API](https://img.shields.io/badge/⚡_Live_API-Render-46e3b7?style=for-the-badge)](https://smart-parking-system-backend-production-6aac.up.railway.app)
 [![Frontend Repo](https://img.shields.io/badge/🚀_Frontend_Repo-Vercel-22c55e?style=for-the-badge)](https://github.com/chiragdhiman99/smart-parking-system-frontend)
 
 </div>
@@ -245,7 +245,7 @@ Deployed on **Render** with auto-deploy from GitHub main branch.
 
 | | |
 |---|---|
-| **Live URL** | https://smart-parking-system-backend-oco6.onrender.com |
+| **Live URL** | https://smart-parking-system-backend-production-6aac.up.railway.app |
 | **Platform** | Render (Node.js service) |
 | **Database** | MongoDB Atlas (cloud) |
 | **Node version** | 22.22.0 |
